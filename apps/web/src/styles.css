@@ -146,6 +146,8 @@ h1, h2, h3 { font-family: var(--font-head); font-weight: 600; letter-spacing: -0
 .article .meta { font-size: 15px; margin-top: 20px; }
 .article-image { border-radius: var(--radius); aspect-ratio: 16 / 9; margin: 32px 0; }
 .body { font-size: 18px; line-height: 1.65; }
+.body img, .body iframe, .body figure { max-width: 100%; height: auto; }
+.body iframe { aspect-ratio: 16 / 9; width: 100%; border: 0; }
 .source-link { display: inline-block; margin-top: 8px; color: var(--accent); font-weight: 500; }
 .related { margin-bottom: 96px; }
 .grid-3 { grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); }

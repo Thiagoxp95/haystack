@@ -12,8 +12,7 @@ import type * as articles from "../articles.js";
 import type * as crons from "../crons.js";
 import type * as news from "../news.js";
 import type * as push from "../push.js";
-import type * as sampleArticles from "../sampleArticles.js";
-import type * as sports from "../sports.js";
+import type * as wp from "../wp.js";
 
 import type {
   ApiFromModules,
@@ -26,8 +25,7 @@ declare const fullApi: ApiFromModules<{
   crons: typeof crons;
   news: typeof news;
   push: typeof push;
-  sampleArticles: typeof sampleArticles;
-  sports: typeof sports;
+  wp: typeof wp;
 }>;
 
 /**

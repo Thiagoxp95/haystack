@@ -1,14 +1,14 @@
 import { api } from "@haystack/backend/convex/_generated/api";
-import type { Doc } from "@haystack/backend/convex/_generated/dataModel";
-import { SPORTS, sportLabel } from "@haystack/backend/convex/sports";
+import type { Post } from "@haystack/backend/convex/wp";
 import { Link } from "@tanstack/react-router";
 import { useQuery } from "convex/react";
 
 export const SITE_NAME = "Esporte para Todos";
 
-type Article = Doc<"articles">;
+type Article = Post;
 
 export function SiteHeader() {
+  const categories = useQuery(api.articles.categories, {});
   return (
     <header className="container site-header">
       <nav className="nav" aria-label="Principal">
@@ -19,9 +19,9 @@ export function SiteHeader() {
           {SITE_NAME}
         </Link>
         <div className="nav-links">
-          {SPORTS.map((s) => (
-            <Link key={s.slug} to="/sport/$sport" params={{ sport: s.slug }} activeProps={{ className: "active" }}>
-              {s.label}
+          {categories?.map((c) => (
+            <Link key={c.id} to="/category/$id" params={{ id: String(c.id) }} activeProps={{ className: "active" }}>
+              {c.name}
             </Link>
           ))}
         </div>
@@ -48,26 +48,26 @@ function toggleTheme() {
   } catch {}
 }
 
-export function Feed({ sport }: { sport?: string }) {
-  const articles = useQuery(api.articles.list, { sport });
+export function Feed({ categoryId, title }: { categoryId?: number; title?: string }) {
+  const articles = useQuery(api.articles.list, { categoryId });
   const highlights = articles?.slice(0, 5) ?? [];
   const latest = articles?.slice(5) ?? [];
 
   return (
     <main className="container">
-      {sport ? <h1 className="page-title">{sportLabel(sport)}</h1> : <h1 className="sr-only">{SITE_NAME}</h1>}
+      {title ? <h1 className="page-title">{title}</h1> : <h1 className="sr-only">{SITE_NAME}</h1>}
 
       {articles === undefined ? (
         <div className="skeleton-block" />
       ) : articles.length === 0 ? (
         <p className="empty">
-          Nenhuma notícia ainda. Rode <code>pnpm --filter @haystack/backend seed</code>.
+          Nenhuma notícia ainda. Rode <code>pnpm --filter @haystack/backend refresh</code>.
         </p>
       ) : (
         <>
           <section className="highlights" aria-label="Destaques">
             {highlights.map((a) => (
-              <Highlight key={a._id} article={a} />
+              <Highlight key={a.id} article={a} />
             ))}
           </section>
           <div className="with-sidebar">
@@ -75,11 +75,11 @@ export function Feed({ sport }: { sport?: string }) {
               {latest.length > 0 && <h2 className="section-title">Últimas notícias</h2>}
               <div className="grid">
                 {latest.map((a) => (
-                  <Card key={a._id} article={a} />
+                  <Card key={a.id} article={a} />
                 ))}
               </div>
             </section>
-            <BySport />
+            <ByCategory />
           </div>
         </>
       )}
@@ -89,10 +89,10 @@ export function Feed({ sport }: { sport?: string }) {
 
 function Highlight({ article }: { article: Article }) {
   return (
-    <Link to="/article/$id" params={{ id: article._id }} className="highlight">
-      <img src={article.imageUrl} alt="" />
+    <Link to="/article/$id" params={{ id: String(article.id) }} className="highlight">
+      {article.imageUrl && <img src={article.imageUrl} alt="" />}
       <div className="highlight-text">
-        <span className="tag">{sportLabel(article.sport)}</span>
+        {article.category && <span className="tag">{article.category}</span>}
         <h2>{article.title}</h2>
         <Meta article={article} />
       </div>
@@ -102,11 +102,11 @@ function Highlight({ article }: { article: Article }) {
 
 export function Card({ article }: { article: Article }) {
   return (
-    <Link to="/article/$id" params={{ id: article._id }} className="card">
-      <span className="tag">{sportLabel(article.sport)}</span>
+    <Link to="/article/$id" params={{ id: String(article.id) }} className="card">
+      {article.category && <span className="tag">{article.category}</span>}
       <h3>{article.title}</h3>
       <Meta article={article} />
-      <img src={article.imageUrl} alt="" loading="lazy" />
+      {article.imageUrl && <img src={article.imageUrl} alt="" loading="lazy" />}
     </Link>
   );
 }
@@ -114,27 +114,30 @@ export function Card({ article }: { article: Article }) {
 export function Meta({ article }: { article: Article }) {
   return (
     <p className="meta">
-      <strong>{article.source}</strong>
+      {article.author && <strong>{article.author}</strong>}
       <time dateTime={new Date(article.publishedAt).toISOString()}>{timeAgo(article.publishedAt)}</time>
     </p>
   );
 }
 
-/** Sidebar: the newest headline in each sport, numbered. */
-export function BySport() {
+/** Sidebar: the newest headline in each category, numbered. */
+export function ByCategory() {
   const articles = useQuery(api.articles.list, {});
-  const rows = SPORTS.flatMap((s) => articles?.find((a) => a.sport === s.slug) ?? []);
+  const categories = useQuery(api.articles.categories, {});
+  const rows = (categories ?? [])
+    .flatMap((c) => articles?.find((a) => a.categoryIds.includes(c.id)) ?? [])
+    .filter((a, i, all) => all.findIndex((b) => b.id === a.id) === i);
   if (rows.length === 0) return null;
 
   return (
     <aside className="sidebar">
-      <h2 className="sidebar-title">Por esporte</h2>
+      <h2 className="sidebar-title">Por categoria</h2>
       <ol className="ranked">
         {rows.map((a, i) => (
-          <li key={a._id}>
+          <li key={a.id}>
             <span className="rank">{i + 1}</span>
-            <Link to="/article/$id" params={{ id: a._id }}>
-              <span className="tag">{sportLabel(a.sport)}</span>
+            <Link to="/article/$id" params={{ id: String(a.id) }}>
+              {a.category && <span className="tag">{a.category}</span>}
               {a.title}
             </Link>
           </li>

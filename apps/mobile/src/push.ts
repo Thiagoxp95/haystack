@@ -17,9 +17,10 @@ Notifications.setNotificationHandler({
 
 /**
  * Asks permission, gets an Expo push token and saves it in Convex.
- * Pass `sports` (slugs) to subscribe to specific sports; omit to keep the current subscription (default: all).
+ * Pass `categories` (WordPress ids) to subscribe to specific ones; omit to keep the current subscription (default: all).
  */
-export async function registerForPush(sports?: string[]) {
+export async function registerForPush(categories?: number[]) {
+  if (!convex) return null; // push tokens are stored in Convex; WordPress-direct mode has nowhere to keep them
   if (Platform.OS === "android") {
     await Notifications.setNotificationChannelAsync("default", {
       name: "Breaking news",
@@ -36,7 +37,7 @@ export async function registerForPush(sports?: string[]) {
     return null;
   }
   const { data: token } = await Notifications.getExpoPushTokenAsync({ projectId });
-  await convex.mutation(api.push.register, { token, sports });
+  await convex.mutation(api.push.register, { token, categories });
   return token;
 }
 

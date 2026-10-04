@@ -1,21 +1,20 @@
 import { v } from "convex/values";
 import { internal } from "./_generated/api";
 import { internalAction, internalMutation, internalQuery, mutation } from "./_generated/server";
-import { sportLabel } from "./sports";
 
-/** Called by the mobile app after it gets an Expo push token. `sports` empty/absent = all sports. */
+/** Called by the mobile app after it gets an Expo push token. `categories` (WP ids) empty/absent = all. */
 export const register = mutation({
-  args: { token: v.string(), sports: v.optional(v.array(v.string())) },
-  handler: async (ctx, { token, sports }) => {
+  args: { token: v.string(), categories: v.optional(v.array(v.number())) },
+  handler: async (ctx, { token, categories }) => {
     if (!/^Expo(nent)?PushToken\[.+\]$/.test(token)) throw new Error("Not an Expo push token");
     const existing = await ctx.db
       .query("pushTokens")
       .withIndex("by_token", (q) => q.eq("token", token))
       .unique();
-    // Omitting `sports` keeps the device's existing subscriptions (the app re-registers on every launch).
+    // Omitting `categories` keeps the device's existing subscriptions (the app re-registers on every launch).
     if (existing) {
-      if (sports !== undefined) await ctx.db.patch(existing._id, { sports });
-    } else await ctx.db.insert("pushTokens", { token, sports });
+      if (categories !== undefined) await ctx.db.patch(existing._id, { categories });
+    } else await ctx.db.insert("pushTokens", { token, categories });
   },
 });
 
@@ -39,19 +38,21 @@ export const removeToken = internalMutation({
 /** Sends one push per (breaking article × subscribed device) via the Expo push API. */
 export const sendBreaking = internalAction({
   args: {
-    articles: v.array(v.object({ id: v.id("articles"), title: v.string(), sport: v.string() })),
+    articles: v.array(
+      v.object({ id: v.number(), title: v.string(), category: v.string(), categoryIds: v.array(v.number()) }),
+    ),
   },
   handler: async (ctx, { articles }) => {
     const tokens = await ctx.runQuery(internal.push.allTokens, {});
     const messages = articles.flatMap((a) =>
       tokens
-        .filter((t) => !t.sports?.length || t.sports.includes(a.sport))
+        .filter((t) => !t.categories?.length || t.categories.some((c) => a.categoryIds.includes(c)))
         .map((t) => ({
           to: t.token,
-          title: `Urgente · ${sportLabel(a.sport)}`,
+          title: a.category ? `Urgente · ${a.category}` : "Urgente",
           body: a.title,
           sound: "default",
-          data: { articleId: a.id },
+          data: { articleId: String(a.id) }, // WP post id; the app opens /article/<id>
         })),
     );
 

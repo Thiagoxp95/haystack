@@ -5,10 +5,10 @@
   "scripts": {
     "dev": "convex dev",
     "codegen": "convex codegen",
-    "seed": "convex run articles:seed",
     "refresh": "convex run news:refresh",
     "typecheck": "tsc --noEmit -p convex",
-    "lint": "oxlint convex"
+    "lint": "oxlint convex",
+    "test": "node --test wp.test.ts"
   },
   "dependencies": {
     "convex": "^1.46.0"

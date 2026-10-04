@@ -4,7 +4,7 @@ Everything an agent needs is in [README.md](./README.md): layout, setup, convent
 
 Short version:
 - Backend = Convex in `packages/backend/convex`. Web = TanStack Start in `apps/web`. Mobile = Expo in `apps/mobile`.
-- Sports live in one list: `packages/backend/convex/sports.ts`.
+- Content comes from WordPress; its address is `WP_BASE_URL` in `packages/backend/convex/wp.ts`.
 - Never hand-edit `convex/_generated/*` or `apps/web/src/routeTree.gen.ts`.
 - Before you finish: `pnpm typecheck && pnpm lint` (plus `pnpm build` for web changes).
 - Expo-specific guidance: `apps/mobile/AGENTS.md`.

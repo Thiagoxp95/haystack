@@ -11,7 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ArticleIdRouteImport } from './routes/article.$id'
-import { Route as SportSportRouteImport } from './routes/sport.$sport'
+import { Route as CategoryIdRouteImport } from './routes/category.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -23,40 +23,40 @@ const ArticleIdRoute = ArticleIdRouteImport.update({
   path: '/article/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
-const SportSportRoute = SportSportRouteImport.update({
-  id: '/sport/$sport',
-  path: '/sport/$sport',
+const CategoryIdRoute = CategoryIdRouteImport.update({
+  id: '/category/$id',
+  path: '/category/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/article/$id': typeof ArticleIdRoute
-  '/sport/$sport': typeof SportSportRoute
+  '/category/$id': typeof CategoryIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/article/$id': typeof ArticleIdRoute
-  '/sport/$sport': typeof SportSportRoute
+  '/category/$id': typeof CategoryIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/article/$id': typeof ArticleIdRoute
-  '/sport/$sport': typeof SportSportRoute
+  '/category/$id': typeof CategoryIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/article/$id' | '/sport/$sport'
+  fullPaths: '/' | '/article/$id' | '/category/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/article/$id' | '/sport/$sport'
-  id: '__root__' | '/' | '/article/$id' | '/sport/$sport'
+  to: '/' | '/article/$id' | '/category/$id'
+  id: '__root__' | '/' | '/article/$id' | '/category/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ArticleIdRoute: typeof ArticleIdRoute
-  SportSportRoute: typeof SportSportRoute
+  CategoryIdRoute: typeof CategoryIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -75,11 +75,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ArticleIdRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/sport/$sport': {
-      id: '/sport/$sport'
-      path: '/sport/$sport'
-      fullPath: '/sport/$sport'
-      preLoaderRoute: typeof SportSportRouteImport
+    '/category/$id': {
+      id: '/category/$id'
+      path: '/category/$id'
+      fullPath: '/category/$id'
+      preLoaderRoute: typeof CategoryIdRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -88,7 +88,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ArticleIdRoute: ArticleIdRoute,
-  SportSportRoute: SportSportRoute,
+  CategoryIdRoute: CategoryIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

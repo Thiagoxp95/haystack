@@ -12,7 +12,7 @@ export const Route = createRootRoute({
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: `${SITE_NAME} — Notícias de esporte` },
-      { name: "description", content: "O que acontece no futebol, NBA, NFL, F1, tênis e NHL." },
+      { name: "description", content: "Corrida, treinos, saúde, eventos e o mercado do esporte." },
       { name: "color-scheme", content: "light dark" },
     ],
     links: [
@@ -39,8 +39,10 @@ function RootDocument({ children }: { children: ReactNode }) {
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT }} />
       </head>
       <body>
-        <SiteHeader />
-        <ConvexProvider client={convex}>{children}</ConvexProvider>
+        <ConvexProvider client={convex}>
+          <SiteHeader />
+          {children}
+        </ConvexProvider>
         <Scripts />
       </body>
     </html>
