@@ -1,0 +1,10 @@
+packages:
+  - apps/*
+  - packages/*
+
+# Expo/Metro is happiest with a flat node_modules in a monorepo.
+nodeLinker: hoisted
+
+# pnpm blocks dependency install scripts by default; esbuild (used by the Convex CLI) needs its postinstall.
+allowBuilds:
+  esbuild: true

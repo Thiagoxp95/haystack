@@ -1,0 +1,16 @@
+{
+  "name": "haystack",
+  "private": true,
+  "packageManager": "pnpm@12.6.0",
+  "scripts": {
+    "dev": "turbo run dev --filter=web",
+    "dev:backend": "pnpm --filter @haystack/backend dev",
+    "build": "turbo run build",
+    "typecheck": "turbo run typecheck",
+    "lint": "turbo run lint"
+  },
+  "devDependencies": {
+    "oxlint": "^1.86.0",
+    "turbo": "^2.11.7"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "$schema": "https://turborepo.com/schema.json",
+  "ui": "stream",
+  "tasks": {
+    "dev": { "cache": false, "persistent": true },
+    "build": { "dependsOn": ["^build"], "outputs": ["dist/**", ".output/**"], "env": ["VITE_CONVEX_URL"] },
+    "typecheck": { "dependsOn": ["^typecheck"] },
+    "lint": {}
+  }
+}
