@@ -48,7 +48,7 @@ export const sendBreaking = internalAction({
         .filter((t) => !t.sports?.length || t.sports.includes(a.sport))
         .map((t) => ({
           to: t.token,
-          title: `Breaking · ${sportLabel(a.sport)}`,
+          title: `Urgente · ${sportLabel(a.sport)}`,
           body: a.title,
           sound: "default",
           data: { articleId: a.id },

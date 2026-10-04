@@ -18,7 +18,7 @@ export default function RootLayout() {
           headerBackButtonDisplayMode: "minimal",
         }}
       >
-        <Stack.Screen name="index" options={{ title: "Haystack", headerLargeTitle: true }} />
+        <Stack.Screen name="index" options={{ title: "Esporte para Todos", headerLargeTitle: true }} />
         <Stack.Screen name="article/[id]" options={{ title: "" }} />
       </Stack>
     </ConvexProvider>
